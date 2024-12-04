@@ -24,3 +24,14 @@
 
 
 ---
+
+## 2D 회전변환 적용 example (Chapter 4)
+### openGL program
+- 궤도를 도는 렌더링을 위해 회전각과 시작 오프셋 값을 유니폼으로 전달
+
+### shader
+- 전달받은 버텍스 좌표에 시작점 오프셋 값을 합한 뒤 회전각 만큼 회전변환시켜서 원 궤도를 돌아가는 것으로 만듦.
+
+### 결과
+
+![Alt text](./readmeData/Screen-Recording-2024-12-04-at-1.54.03-PM.gif)

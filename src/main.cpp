@@ -21,19 +21,18 @@ const float theta_step = 0.01f;
 std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
 
 glm::vec4 vertPos[] = { // 5 vertices
-	{ 0.0F, 0.5F, 0.0F, 1.0F }, // v0
-	{ 0.5F, -0.3F, 0.0F, 1.0F }, // v1
-	{ 0.0F, -0.3F, -0.5F, 1.0F }, // v2
-	{ -0.5F, -0.3F, 0.0F, 1.0F }, // v3
-	{ 0.0F, -0.3F, 0.5F, 1.0F }, // v4
+	{ 0.0F, 0.1F, 0.0F, 1.0F }, // v0
+	{ 0.1F, -0.1F, 0.0F, 1.0F }, // v1
+	{ -0.1F, -0.1F, 0.0F, 1.0F }, // v2
+	{ 0.0F, 0.0F, 0.0F, 1.0F }, // v2
 };
 
 glm::vec4 vertColor[] = { // 5 colors
 	{ 1.0F, 1.0F, 1.0F, 1.0F, }, // v0: white
 	{ 1.0F, 0.3F, 0.3F, 1.0F, }, // v1: red
 	{ 0.3F, 1.0F, 0.3F, 1.0F, }, // v2: green
-	{ 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
-	{ 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
+	// { 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
+	// { 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
 };
 
 GLuint indices[] = { // 6 * 3 = 18 indices
@@ -126,10 +125,11 @@ void initFunc(void)
     glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
     glEnableVertexAttribArray(aColor);
 
-    uint32_t ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    // uint32_t ebo;
+    // glGenBuffers(1, &ebo);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
 
@@ -172,10 +172,16 @@ void drawFunc()
 	}
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    GLuint voffset = glGetUniformLocation(prog, "uTheta");
-    glUniform1f(voffset, theta);
 
-    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+    GLuint offset = glGetUniformLocation(prog, "offset");
+    glUniform4f(offset, 0.5f, 0.0f, 0.0f, 0.0f);
+
+    GLuint angle = glGetUniformLocation(prog, "uTheta");
+    glUniform1f(angle, theta);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
     // glFinish();
 }
 
