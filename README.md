@@ -35,3 +35,21 @@
 ### 결과
 
 ![Alt text](./readmeData/Screen-Recording-2024-12-04-at-1.54.03-PM.gif)
+
+---
+
+## 3D 회전변환 적용 example (Chapter 4)
+### openGL program
+- 앞서 구현한 피라미드를 y축 뿐만 아니라 다른 축을 기준으로 회전시키기
+- 키보드 콜백으로 QAZ, WSX, EDC 로 각 축 회전 방향 dir값 세팅
+- updateFunc() 에서 회전행렬을 계산 진행. Post-Multyplied 고려하여 glm::rotate 사용 (회전변환 순서 X축 -> Y축 -> Z축)
+- 유니폼 변수로 회전행렬을 보내 쉐이더에서 계산 진행
+
+### shader
+- gl_Position으로 버텍스와 회전행렬 곱을 진행하여 진행
+
+## 결과
++X -> -X -> +Y -> -Y -> +Z -> -Z 순
+
+![Alt text](./readmeData/Screen-Recording-2024-12-04-at-3.16.22-PM.gif)
+

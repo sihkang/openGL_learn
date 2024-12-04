@@ -16,23 +16,26 @@ uint32_t prog = 0;
 
 glm::vec4 moveCur = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-float theta = 0.0f;
-const float theta_step = 0.01f;
+GLfloat theta = 0;
+glm::vec3 angle = { 0.0f, 0.0f, 0.0f };
+glm::vec3 dir = {0.0f, 0.0f, 0.0f };
 std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
+glm::mat4 mat = glm::mat4(1.0f);
 
 glm::vec4 vertPos[] = { // 5 vertices
-	{ 0.0F, 0.1F, 0.0F, 1.0F }, // v0
-	{ 0.1F, -0.1F, 0.0F, 1.0F }, // v1
-	{ -0.1F, -0.1F, 0.0F, 1.0F }, // v2
-	{ 0.0F, 0.0F, 0.0F, 1.0F }, // v2
+	{ 0.0F, 0.5F, 0.0F, 1.0F }, // v0
+	{ 0.5F, -0.3F, 0.0F, 1.0F }, // v1
+	{ 0.0F, -0.3F, -0.5F, 1.0F }, // v2
+	{ -0.5F, -0.3F, 0.0F, 1.0F }, // v3
+	{ 0.0F, -0.3F, 0.5F, 1.0F }, // v4
 };
 
 glm::vec4 vertColor[] = { // 5 colors
 	{ 1.0F, 1.0F, 1.0F, 1.0F, }, // v0: white
 	{ 1.0F, 0.3F, 0.3F, 1.0F, }, // v1: red
 	{ 0.3F, 1.0F, 0.3F, 1.0F, }, // v2: green
-	// { 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
-	// { 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
+	{ 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
+	{ 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
 };
 
 GLuint indices[] = { // 6 * 3 = 18 indices
@@ -125,11 +128,10 @@ void initFunc(void)
     glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
     glEnableVertexAttribArray(aColor);
 
-
-    // uint32_t ebo;
-    // glGenBuffers(1, &ebo);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    uint32_t ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
 
@@ -137,7 +139,14 @@ void updateFunc()
 {
     std::chrono::system_clock::time_point curTime = std::chrono::system_clock::now();
     std::chrono::milliseconds elapsedTimeMSEC = std::chrono::duration_cast<std::chrono::milliseconds>(curTime - lastTime); // in millisecond
-    theta = (elapsedTimeMSEC.count() / 1000.0F) * (float)M_PI_4; // in <math.h>, M_PI_2 = pi/2
+    theta = (elapsedTimeMSEC.count() / 1000.0F) * (float)M_PI; // in <math.h>, M_PI_2 = pi/2
+    angle += theta * dir;
+    lastTime = curTime;
+
+    mat = glm::mat4(1.0f);
+    mat = glm::rotate(mat, angle.z, glm::vec3(0.0f, 0.0f, 1.0f));
+    mat = glm::rotate(mat, angle.y, glm::vec3(0.0f, 1.0f, 0.0f));
+    mat = glm::rotate(mat, angle.x, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 int cullMode = 0;
@@ -172,16 +181,13 @@ void drawFunc()
 	}
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // GLuint uAngle = glGetUniformLocation(prog, "uAngle");
+    // glUniform3fv(uAngle, 3, glm::value_ptr(angle));
 
-    GLuint offset = glGetUniformLocation(prog, "offset");
-    glUniform4f(offset, 0.5f, 0.0f, 0.0f, 0.0f);
+    GLuint uMat = glGetUniformLocation(prog, "transform");
+    glUniformMatrix4fv(uMat, 1, GL_TRUE, glm::value_ptr(mat));
 
-    GLuint angle = glGetUniformLocation(prog, "uTheta");
-    glUniform1f(angle, theta);
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    // glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
     // glFinish();
 }
 
@@ -214,6 +220,51 @@ void keyboardCBFunc(GLFWwindow* window, int key, int scancode, int action, int m
             }
             break;
         // can add more key actions
+
+        case (GLFW_KEY_Q):
+            if (action == GLFW_PRESS)
+                dir.x = 1.0f;
+            break;
+        
+        case (GLFW_KEY_W):
+            if (action == GLFW_PRESS)
+                dir.y = 1.0f;
+            break;
+        
+        case (GLFW_KEY_E):
+            if (action == GLFW_PRESS)
+                dir.z = 1.0f;
+            break;
+        
+        case (GLFW_KEY_A):
+            if (action == GLFW_PRESS)
+                dir.x = 0.0f;
+            break;
+        
+        case (GLFW_KEY_S):
+            if (action == GLFW_PRESS)
+                dir.y = 0.0f;
+            break;
+        
+        case (GLFW_KEY_D):
+            if (action == GLFW_PRESS)
+                dir.z = 0.0f;
+            break;
+        
+        case (GLFW_KEY_Z):
+            if (action == GLFW_PRESS)
+                dir.x = -1.0f;
+            break;
+        
+        case (GLFW_KEY_X):
+            if (action == GLFW_PRESS)
+                dir.y = -1.0f;
+            break;
+        
+        case (GLFW_KEY_C):
+            if (action == GLFW_PRESS)
+                dir.z = -1.0f;
+            break;
         
         default:
             break;

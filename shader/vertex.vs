@@ -2,19 +2,16 @@
 
 in vec4 vertexPos;
 in vec4 aColor;
-uniform float uTheta;
-uniform vec4 offset;
+// uniform vec3 uAngle;
+uniform mat4 transform;
 
 out vec4 Pos;
 out vec4 vColor;
 
+
 void main()
 {
     vColor = aColor;
-    gl_Position.x = vertexPos.x * cos(uTheta) - vertexPos.y * sin(uTheta) + offset.x * cos(uTheta) - offset.y * sin(uTheta);
-    gl_Position.y = vertexPos.x * sin(uTheta) + vertexPos.y * cos(uTheta) + offset.x * sin(uTheta) + offset.y * cos(uTheta);
-    gl_Position.z *= -1.0f;
-    gl_Position.zw = vertexPos.yw;
-    // gl_Position += offset;
+    gl_Position = transform * vertexPos;
     Pos = gl_Position;
 }
