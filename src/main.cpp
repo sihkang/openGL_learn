@@ -14,6 +14,36 @@ uint32_t vert = 0;
 uint32_t frag = 0;
 uint32_t prog = 0;
 
+glm::vec4 moveCur = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+
+float theta = 0.0f;
+const float theta_step = 0.01f;
+std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
+
+glm::vec4 vertPos[] = { // 5 vertices
+	{ 0.0F, 0.5F, 0.0F, 1.0F }, // v0
+	{ 0.5F, -0.3F, 0.0F, 1.0F }, // v1
+	{ 0.0F, -0.3F, -0.5F, 1.0F }, // v2
+	{ -0.5F, -0.3F, 0.0F, 1.0F }, // v3
+	{ 0.0F, -0.3F, 0.5F, 1.0F }, // v4
+};
+
+glm::vec4 vertColor[] = { // 5 colors
+	{ 1.0F, 1.0F, 1.0F, 1.0F, }, // v0: white
+	{ 1.0F, 0.3F, 0.3F, 1.0F, }, // v1: red
+	{ 0.3F, 1.0F, 0.3F, 1.0F, }, // v2: green
+	{ 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
+	{ 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
+};
+
+GLuint indices[] = { // 6 * 3 = 18 indices
+	0, 1, 2, // face 0: v0-v1-v2
+	0, 2, 3, // face 1: v0-v2-v3
+	0, 3, 4, // face 2: v0-v3-v4
+	0, 4, 1, // face 3: v0-v4-v1
+	1, 4, 3, // face 4: v1-v4-v3
+	1, 3, 2, // face 5: v1-v3-v2
+};
 
 void initFunc(void) 
 {
@@ -71,38 +101,37 @@ void initFunc(void)
     
     // execute it!
     glUseProgram(prog);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthRange(0.0, 1.0);
+    glClearDepthf(1.0f);
+
+    uint32_t vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    uint32_t vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), glm::value_ptr(vertPos[0]), GL_STATIC_DRAW);
+    GLuint locPos = glGetAttribLocation(prog, "vertexPos");
+    glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+    glEnableVertexAttribArray(locPos);
+
+    uint32_t vbo_color;
+    glGenBuffers(1, &vbo_color);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertColor), glm::value_ptr(vertColor[0]), GL_STATIC_DRAW);
+    GLuint aColor = glGetAttribLocation(prog, "aColor");
+    glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+    glEnableVertexAttribArray(aColor);
+
+    uint32_t ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-glm::vec4 moveCur = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-
-float theta = 0.0f;
-const float theta_step = 0.01f;
-std::chrono::system_clock::time_point lastTime = std::chrono::system_clock::now();
-
-glm::vec4 vertPos[] = { // 5 vertices
-	{ 0.0F, 0.5F, 0.0F, 1.0F }, // v0
-	{ 0.5F, -0.3F, 0.0F, 1.0F }, // v1
-	{ 0.0F, -0.3F, -0.5F, 1.0F }, // v2
-	{ -0.5F, -0.3F, 0.0F, 1.0F }, // v3
-	{ 0.0F, -0.3F, 0.5F, 1.0F }, // v4
-};
-
-glm::vec4 vertColor[] = { // 5 colors
-	{ 1.0F, 1.0F, 1.0F, 1.0F, }, // v0: white
-	{ 1.0F, 0.3F, 0.3F, 1.0F, }, // v1: red
-	{ 0.3F, 1.0F, 0.3F, 1.0F, }, // v2: green
-	{ 0.3F, 0.3F, 1.0F, 1.0F, }, // v3: blue
-	{ 1.0F, 1.0F, 0.3F, 1.0F, }, // v4: yellow
-};
-
-GLuint indices[] = { // 6 * 3 = 18 indices
-	0, 1, 2, // face 0: v0-v1-v2
-	0, 2, 3, // face 1: v0-v2-v3
-	0, 3, 4, // face 2: v0-v3-v4
-	0, 4, 1, // face 3: v0-v4-v1
-	1, 4, 3, // face 4: v1-v4-v3
-	1, 3, 2, // face 5: v1-v3-v2
-};
 
 void updateFunc()
 {
@@ -115,11 +144,6 @@ int cullMode = 0;
 
 void drawFunc()
 {
-    glEnable(GL_DEPTH_TEST);
-    glDepthRange(0.0, 1.0);
-    glClearDepthf(1.0f);
-
-    
     switch (cullMode) 
     {
 	default:
@@ -148,46 +172,11 @@ void drawFunc()
 	}
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    uint32_t vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    uint32_t vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertPos), glm::value_ptr(vertPos[0]), GL_STATIC_DRAW);
-    GLuint locPos = glGetAttribLocation(prog, "vertexPos");
-    glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-    glEnableVertexAttribArray(locPos);
-
-    uint32_t vbo_color;
-    glGenBuffers(1, &vbo_color);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertColor), glm::value_ptr(vertColor[0]), GL_STATIC_DRAW);
-    GLuint aColor = glGetAttribLocation(prog, "aColor");
-    glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-    glEnableVertexAttribArray(aColor);
-
-    uint32_t ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    
-    // GLuint locPos = glGetAttribLocation(prog, "vertexPos");
-    // glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-    // glEnableVertexAttribArray(locPos);
-    
-    // GLuint aColor = glGetAttribLocation(prog, "aColor");
-    // glVertexAttribPointer(aColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-    // glEnableVertexAttribArray(aColor);
-
     GLuint voffset = glGetUniformLocation(prog, "uTheta");
     glUniform1f(voffset, theta);
 
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
-    
-    glFinish();
+    // glFinish();
 }
 
 void refreshFunc(GLFWwindow* window) 
@@ -195,6 +184,7 @@ void refreshFunc(GLFWwindow* window)
     // refresh
     printf("refresh called\n");
     drawFunc();
+
     // GLFW action
     glfwSwapBuffers(window);
 }
