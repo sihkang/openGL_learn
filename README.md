@@ -120,3 +120,15 @@
 
 ---
 
+## View transformation exercise (chapter 5)
+### openGL program
+- perspective transform을 통해 원근감 있는 렌더링을 진행하였음.
+- glm::frustum 함수를 통해 뷰 프러스텀 영역을 설정하고 그에 해당하는 perspective transform matrix를 반환하게 함.
+- 유니폼 변수로 넘겨서 버텍스 쉐이더에서 계산 진행.
+- 비율 4:3 으로 만들고 그에 맞게 프러스텀 x,y 값을 설정하여 늘어지지 않게 함.(x: -1~1, y:-0.75 ~0.75)
+
+## 결과
+
+![Alt text](./readmeData/Screen-Recording-2024-12-09-at-4.06.21-PM.gif)
+
+- 멀어짐에 따라 원근감이 느껴지게 됨.

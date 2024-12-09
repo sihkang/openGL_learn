@@ -136,7 +136,7 @@ void initFunc(void)
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPyramid), sizeof(indicesBox), indicesBox);
 }
 
-const GLfloat radius = 0.1f;
+const GLfloat radius = 2.0f;
 
 void updateFunc()
 {
@@ -155,13 +155,23 @@ void updateFunc()
     matBox = glm::scale(matBox, glm::vec3(0.3f, 0.3f, 0.3f));
 
     glm::mat4 viewMat = glm::lookAt(
-        glm::vec3(radius * glm::sin(theta / 2), 0.05f, radius * glm::cos(theta / 2)),
+        glm::vec3(radius * glm::sin(theta / 2), 0.05, radius * glm::cos(theta / 2)),
         glm::vec3(0.02f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f)
     );
     
     GLuint locViewMat = glGetUniformLocation(prog, "uView");
     glUniformMatrix4fv(locViewMat, 1, GL_FALSE, glm::value_ptr(viewMat));
+    
+    glm::mat4 projMat = glm::frustum(
+        -0.5f, 0.5f,
+        -0.375f, 0.375f,
+        1.0f, 3.0f
+    );
+    
+
+    GLuint locProjMat = glGetUniformLocation(prog, "uProj");
+    glUniformMatrix4fv(locProjMat, 1, GL_FALSE, glm::value_ptr(projMat));
 }
 
 void drawFunc()

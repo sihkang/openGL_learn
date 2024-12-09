@@ -10,8 +10,8 @@
 
 #include <chrono>
 
-const unsigned int WIN_W = 300; // window size in pixels, (Width, Height)
-const unsigned int WIN_H = 300;
+const unsigned int WIN_W = 600; // window size in pixels, (Width, Height)
+const unsigned int WIN_H = 400;
 const unsigned int WIN_X = 500; // window position in pixels, (X, Y)
 const unsigned int WIN_Y = 500;
 
