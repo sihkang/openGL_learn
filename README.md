@@ -108,3 +108,15 @@
 
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-09-at-1.54.57-PM.gif)
+
+---
+
+## View trasnformation exercise (chapter 5)
+### openGL program
+- view matrix를 glm::LookAt 함수를 활용하여 EYE, AT, UP 벡터를 전달하는 식으로 뷰 매트릭스 전달.
+- 사용자가 일일히 뷰 매트릭스를 구현하지 않아도 편리하였음.
+
+결과는 위와 동일.
+
+---
+

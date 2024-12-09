@@ -136,7 +136,7 @@ void initFunc(void)
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPyramid), sizeof(indicesBox), indicesBox);
 }
 
-glm::mat4 viewMat { 1.0f } ;
+const GLfloat radius = 0.1f;
 
 void updateFunc()
 {
@@ -154,12 +154,11 @@ void updateFunc()
     matBox = glm::rotate(matBox, theta, glm::vec3(1.0f, 0.0f, 0.0f));
     matBox = glm::scale(matBox, glm::vec3(0.3f, 0.3f, 0.3f));
 
-    viewMat = {
-        { cos(theta), 0, -sin(theta), 0},
-        { 0, 1, 0 , 0},
-        { sin(theta), 0, cos(theta) , -0.1f},
-        { 0, 0, 0, 1}
-    };
+    glm::mat4 viewMat = glm::lookAt(
+        glm::vec3(radius * glm::sin(theta / 2), 0.05f, radius * glm::cos(theta / 2)),
+        glm::vec3(0.02f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 1.0f, 0.0f)
+    );
     
     GLuint locViewMat = glGetUniformLocation(prog, "uView");
     glUniformMatrix4fv(locViewMat, 1, GL_FALSE, glm::value_ptr(viewMat));
@@ -192,14 +191,10 @@ void drawFunc()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertBox), glm::value_ptr(vertBox[0]), GL_STATIC_DRAW);
     locPos = glGetAttribLocation(prog, "aPos");
     glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4) * 2, 0);
-    // glEnableVertexAttribArray(locPos);
     locCol = glGetAttribLocation(prog, "aColor");
     glVertexAttribPointer(locCol, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4) * 2, (void *)sizeof(glm::vec4));
-    // glEnableVertexAttribArray(locCol);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
 
-    // glDrawArrays(GL_TRIANGLES, 0, 18);
-    // glFinish();
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
 }
 
 void refreshFunc(GLFWwindow* window) 
