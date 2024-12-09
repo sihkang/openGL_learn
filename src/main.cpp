@@ -136,7 +136,7 @@ void initFunc(void)
     glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesPyramid), sizeof(indicesBox), indicesBox);
 }
 
-
+glm::mat4 viewMat { 1.0f } ;
 
 void updateFunc()
 {
@@ -153,13 +153,23 @@ void updateFunc()
     matBox = glm::translate(matBox, glm::vec3(0.4f, 0.0f, 0.0f));
     matBox = glm::rotate(matBox, theta, glm::vec3(1.0f, 0.0f, 0.0f));
     matBox = glm::scale(matBox, glm::vec3(0.3f, 0.3f, 0.3f));
+
+    viewMat = {
+        { cos(theta), 0, -sin(theta), 0},
+        { 0, 1, 0 , 0},
+        { sin(theta), 0, cos(theta) , -0.1f},
+        { 0, 0, 0, 1}
+    };
+    
+    GLuint locViewMat = glGetUniformLocation(prog, "uView");
+    glUniformMatrix4fv(locViewMat, 1, GL_FALSE, glm::value_ptr(viewMat));
 }
 
 void drawFunc()
 {    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    GLuint locMat = glGetUniformLocation(prog, "uMat");
+    GLuint locMat = glGetUniformLocation(prog, "uModel");
     glUniformMatrix4fv(locMat, 1, GL_FALSE, glm::value_ptr(matPyramid));
 
     glGenBuffers(1, &vboP);

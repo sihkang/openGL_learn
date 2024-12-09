@@ -95,3 +95,16 @@
 
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-07-at-4.00.35-PM.gif)
+
+---
+
+## View transformation exercise (chapter 5)
+### openGL program
+- view transform에 해당하는 행렬을 직접 만들어서, 카메라가 물체 주변을 원 궤도로 돌 때 매 이미지를 렌더링하였음.
+- 뷰 매트리스를 업데이트 함수에서 계산하여 쉐이더로 유니폼 변수로 전달하여 계산하게 함.
+
+### shader
+- vertex shader에서 뷰 트랜스폼에 대한 계산 + 모델 트랜스폼에 대한 계산 진행
+
+## 결과
+![Alt text](./readmeData/Screen-Recording-2024-12-09-at-1.54.57-PM.gif)
