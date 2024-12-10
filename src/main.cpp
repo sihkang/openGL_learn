@@ -174,12 +174,40 @@ void updateFunc()
     glUniformMatrix4fv(locProjMat, 1, GL_FALSE, glm::value_ptr(projMat));
 }
 
-void drawFunc()
+void drawFunc(GLFWwindow* window)
 {    
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glViewport(0, 0, WIN_W, WIN_H);
+    GLint win_w, win_h;
+    glfwGetWindowSize(window, &win_w, &win_h);
+
+    GLint vp_x, vp_y;
+    GLsizei vp_w, vp_h;
+    GLfloat aspect = (GLfloat)WIN_W / (GLfloat)WIN_H;
+    if (win_w < win_h * aspect) // portrait case
+    {
+        vp_w = win_w;
+        vp_h = (GLsizei)(win_w / aspect);
+        vp_x = 0;
+        vp_y = (win_h - vp_h) / 2;
+    }
+    else
+    {
+        vp_h = win_h;
+        vp_w = (GLsizei)(win_h * aspect);
+        vp_y = 0;
+        vp_x = (win_w - vp_w) / 2;
+    }
+    glViewport(vp_x, vp_y, vp_w, vp_h);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(vp_x, vp_y, vp_w, vp_h);
+    glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glScissor(0, 0, win_w, win_h);
+    glDisable(GL_SCISSOR_TEST);
+
+
     GLuint locMat = glGetUniformLocation(prog, "uModel");
     glUniformMatrix4fv(locMat, 1, GL_FALSE, glm::value_ptr(matPyramid));
 
@@ -208,10 +236,10 @@ void drawFunc()
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
 
-    GLuint map_x = (WIN_W * 0.7f);
-    GLuint map_y = (WIN_H * 0.05f);
-    GLuint map_w = (WIN_W * 0.25f);
-    GLuint map_h = (WIN_H * 0.25f);
+    GLuint map_x = vp_x + (vp_w * 0.7f);
+    GLuint map_y = vp_y + (vp_h * 0.05f);
+    GLuint map_w = (vp_w * 0.25f);
+    GLuint map_h = (vp_h * 0.25f);
     glViewport(map_x, map_y, map_w, map_h);
     glEnable(GL_SCISSOR_TEST);
     glScissor(map_x, map_y, map_w, map_h);
@@ -219,7 +247,7 @@ void drawFunc()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
-    glScissor(0,0,WIN_W,WIN_H);
+    glScissor(0,0,win_w, win_h);
     glDisable(GL_SCISSOR_TEST);
 }
 
@@ -227,7 +255,7 @@ void refreshFunc(GLFWwindow* window)
 {
     // refresh
     printf("refresh called\n");
-    drawFunc();
+    drawFunc(window);
 
     // GLFW action
     glfwSwapBuffers(window);
@@ -297,7 +325,7 @@ int main(int argc, char* argv[])
     {
         // draw
         updateFunc();
-        drawFunc();
+        drawFunc(window);
 
         // GLFW actions
         glfwSwapBuffers(window);
