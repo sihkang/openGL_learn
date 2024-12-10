@@ -147,3 +147,16 @@
 
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-10-at-2.12.05-PM.gif)
+
+---
+
+## Sphere generation by octahedron exercise (chapter 6)
+### openGL program
+- 앞선 피라미드 트랙볼 예제(chapter 4)에서 진행하였음
+- 원점 상에 위치한 정팔면체를 삼각분할하면서 구를 만들어가는 과정을 진행함.
+- 재귀적으로 삼각분할하면서 만들어지는 삼각형의 색상을 랜덤하게 두어 구분되기 편하게 함.
+- 정사면체로 진행했을 때 보다 좀 더 균일한 크기의 삼각형들로 구를 구성하게 되었음.
+
+
+## 결과
+![Alt text](./readmeData/Screen-Recording-2024-12-10-at-5.36.54-PM.gif)
