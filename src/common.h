@@ -10,10 +10,10 @@
 
 #include <chrono>
 
-const unsigned int WIN_W = 600; // window size in pixels, (Width, Height)
-const unsigned int WIN_H = 400;
-const unsigned int WIN_X = 500; // window position in pixels, (X, Y)
-const unsigned int WIN_Y = 500;
+const unsigned int WIN_W = 640; // window size in pixels, (Width, Height)
+const unsigned int WIN_H = 480;
+const unsigned int WIN_X = 100; // window position in pixels, (X, Y)
+const unsigned int WIN_Y = 100;
 
 std::string LoadTextFile(const std::string &filename);
 const char* loadFile( const char* filename ) ;

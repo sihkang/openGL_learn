@@ -155,7 +155,7 @@ void updateFunc()
     matBox = glm::scale(matBox, glm::vec3(0.3f, 0.3f, 0.3f));
 
     glm::mat4 viewMat = glm::lookAt(
-        glm::vec3(radius * glm::sin(theta / 2), 0.05, radius * glm::cos(theta / 2)),
+        glm::vec3(radius * glm::sin(theta / 2), 3, radius * glm::cos(theta / 2)),
         glm::vec3(0.02f, 0.0f, 0.0f),
         glm::vec3(0.0f, 1.0f, 0.0f)
     );
@@ -166,7 +166,7 @@ void updateFunc()
     glm::mat4 projMat = glm::frustum(
         -0.5f, 0.5f,
         -0.375f, 0.375f,
-        1.0f, 3.0f
+        1.0f, 5.0f
     );
     
 
@@ -176,8 +176,10 @@ void updateFunc()
 
 void drawFunc()
 {    
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glViewport(0, 0, WIN_W, WIN_H);
     GLuint locMat = glGetUniformLocation(prog, "uModel");
     glUniformMatrix4fv(locMat, 1, GL_FALSE, glm::value_ptr(matPyramid));
 
@@ -205,6 +207,20 @@ void drawFunc()
     glVertexAttribPointer(locCol, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4) * 2, (void *)sizeof(glm::vec4));
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
+
+    GLuint map_x = (WIN_W * 0.7f);
+    GLuint map_y = (WIN_H * 0.05f);
+    GLuint map_w = (WIN_W * 0.25f);
+    GLuint map_h = (WIN_H * 0.25f);
+    glViewport(map_x, map_y, map_w, map_h);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(map_x, map_y, map_w, map_h);
+    glClearColor(0.1f, 0.1f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, (void *)(sizeof(GLuint) * 18));
+    glScissor(0,0,WIN_W,WIN_H);
+    glDisable(GL_SCISSOR_TEST);
 }
 
 void refreshFunc(GLFWwindow* window) 
@@ -257,6 +273,7 @@ int main(int argc, char* argv[])
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // OpenGL 4.x
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1); // OpenGL x.1
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core profile
+    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GL_FALSE);
 
     GLFWwindow* window = glfwCreateWindow(WIN_W, WIN_H, win_name, NULL, NULL);
     glfwSetWindowPos(window, WIN_X, WIN_Y);

@@ -132,3 +132,14 @@
 ![Alt text](./readmeData/Screen-Recording-2024-12-09-at-4.06.21-PM.gif)
 
 - 멀어짐에 따라 원근감이 느껴지게 됨.
+
+---
+
+## Minimap using viewport, scissor box exercise (chapter 5)
+### openGL program
+- 뷰포트로 NDC의 출력을 윈도우 상의 특정 영역에 출력되게끔 제한할 수 있는 성질을 이용하여 미니맵같이 만들어봄.
+- 미니맵과 원래화면 사이의 clearcolor를 다르게하였고, 미니맵의 clearcolor가 원래화면을 glClear 과정에서 다 덮어씌우지 않도록, scissor box를 활용하여 업데이트할 영역만 제한하여 clear시킴.
+- 완벽한 미니맵 형태는 아니나, 이런 테크닉을 통해 게임 상의 미니맵, 혹은 거울이미지 등을 렌더링할 수 있음을 알게되었음.
+
+## 결과
+![Alt text](./readmeData/Screen-Recording-2024-12-10-at-12.10.59-PM.gif)
