@@ -39,6 +39,23 @@ glm::vec4 vertSphere[10240];
 glm::vec4 normSphere[10240];
 glm::vec4 colorSphere[10240];
 
+struct Light
+{
+    glm::vec4 position;
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
+    glm::vec4 att;
+};
+
+struct Material
+{
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
+    GLfloat shineness;
+};
+
 void triangles(int level, const glm::vec3 a, const glm::vec3 b, const glm::vec3 c) {
 	if (numVertSphere >= sizeof(vertSphere) / sizeof(vertSphere[0])) {
 		printf("vertex buffer overflow...\n");
@@ -53,13 +70,13 @@ void triangles(int level, const glm::vec3 a, const glm::vec3 b, const glm::vec3 
 		normSphere[numVertSphere+1] = glm::vec4(b.x, b.y, b.z, 1.0F);
 		normSphere[numVertSphere+2] = glm::vec4(c.x, c.y, c.z, 1.0F);
 		// random color for each face
-		glm::vec4 color( 1.0f, 1.0f, 1.0f, 1.0f );
-		color.r = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
-		color.g = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
-		color.b = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
-		colorSphere[numVertSphere] = color;
-		colorSphere[numVertSphere+1] = color;
-		colorSphere[numVertSphere+2] = color;
+		// glm::vec4 color( 1.0f, 1.0f, 1.0f, 1.0f );
+		// color.r = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
+		// color.g = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
+		// color.b = ((rand() % 1000) / 1000.0F) * 0.25f + 0.75f;
+		// colorSphere[numVertSphere] = color;
+		// colorSphere[numVertSphere+1] = color;
+		// colorSphere[numVertSphere+2] = color;
 		numVertSphere += 3;
 	} 
     else 
@@ -170,13 +187,22 @@ void initFunc(void)
     GLuint locPos = glGetAttribLocation(prog, "aPos");
     glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
     glEnableVertexAttribArray(locPos);
+    
+    GLuint vbo_n;
+    glGenBuffers(1, &vbo_n);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_n);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(normSphere), glm::value_ptr(normSphere[0]), GL_STATIC_DRAW);
+    locPos = glGetAttribLocation(prog, "aNorm");
+    glVertexAttribPointer(locPos, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+    glEnableVertexAttribArray(locPos);
+    
 
     glGenBuffers(1, &vbo_color);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_color);
     glBufferData(GL_ARRAY_BUFFER, sizeof(colorSphere), glm::value_ptr(colorSphere[0]), GL_STATIC_DRAW);
-    GLuint locColor = glGetAttribLocation(prog, "aColor");
-    glVertexAttribPointer(locColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
-    glEnableVertexAttribArray(locColor);
+    // GLuint locColor = glGetAttribLocation(prog, "aColor");
+    // glVertexAttribPointer(locColor, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), 0);
+    // glEnableVertexAttribArray(locColor);
 
 }
 
@@ -308,6 +334,36 @@ void mouseButtonFunc(GLFWwindow* win, int button, int action, int mods)
     fflush(stdout);
 }
 
+void setLnM()
+{
+    Light light;
+    Material material;
+
+    light.position = {-3.0f, 3.0f, 3.0f, 1.0f};
+    light.ambient = {0.2f, 0.2f, 0.2f, 1.0f};
+    light.diffuse = {4.0f, 4.0f, 4.0f, 1.0f};
+    light.specular = {3.0f,3.0f, 3.0f, 1.0f};
+    light.att = {1.0f, 0.2f, 0.2f, 1.0f};
+
+    material.ambient = { 1.0f, 1.0f, 1.0f, 1.0f };
+    material.diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+    material.specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+    material.shineness = 32.0f;
+
+    GLuint loc = glGetUniformLocation(prog, "light.position");
+    glUniform4fv(loc, 1, glm::value_ptr(light.position));
+    loc = glGetUniformLocation(prog, "light.ambient");    glUniform4fv(loc, 1, glm::value_ptr(light.ambient));
+    loc = glGetUniformLocation(prog, "light.diffuse");    glUniform4fv(loc, 1, glm::value_ptr(light.diffuse));
+    loc = glGetUniformLocation(prog, "light.specular");    glUniform4fv(loc, 1, glm::value_ptr(light.specular));
+    loc = glGetUniformLocation(prog, "light.att");    glUniform4fv(loc, 1, glm::value_ptr(light.att));
+
+    loc = glGetUniformLocation(prog, "material.ambient");    glUniform4fv(loc, 1, glm::value_ptr(material.ambient));
+    loc = glGetUniformLocation(prog, "material.diffuse");    glUniform4fv(loc, 1, glm::value_ptr(material.diffuse));
+    loc = glGetUniformLocation(prog, "material.specular");    glUniform4fv(loc, 1, glm::value_ptr(material.specular));
+    loc = glGetUniformLocation(prog, "material.shineness");    glUniform1f(loc, material.shineness);
+    
+}
+
 int main(int argc, char* argv[])
 {
     // get your program name
@@ -348,6 +404,7 @@ int main(int argc, char* argv[])
 
     // main loop
     initFunc();
+    setLnM();
     while (!glfwWindowShouldClose(window)) 
     {
         // draw

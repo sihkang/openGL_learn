@@ -160,3 +160,19 @@
 
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-10-at-5.36.54-PM.gif)
+
+---
+
+## Gouraud Shading exercise (chapter 6)
+### openGL program
+- 버텍스 상의 노말벡터를 기준으로 ambient, diffuse, specular 항 값을 구해 버텍스의 색상으로 사용.
+- vertex shader에서 쉐이딩 계산을 진행하고, 버텍스 간 픽셀 색상값은 레스터라이저의 이중보간을 통해 채워지게 된다.
+- 삼각분할을 통해 생성된 구의 각진 부분이 빛이 정반사되는 부분에서 직접적으로 보임.
+- Light, Material 구조체를 사용하여 데이터 관리
+
+### vertex shader
+- 버텍스에 색상값을 지정해주기 위해, 버텍스 쉐이더에서 쉐이딩 진행.
+
+## 결과
+![Alt text](./readmeData/Screen-Recording-2024-12-12-at-1.57.33-PM.gif)
+
