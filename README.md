@@ -189,5 +189,5 @@
 
 ## 결과
 ![Alt text](<./readmeData/Screen Shot 2024-12-12 at 2.13.03 PM.png>)
-
-
+왼 : uMat | 오 : transpose(inverse(uMat))
+- 오른쪽이 올바르게 렌더링되었다는 것을 볼 수 있었음.
