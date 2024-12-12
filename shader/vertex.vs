@@ -25,25 +25,14 @@ uniform mat4 uMat;
 uniform Light light;
 uniform Material material;
 
-out vec4 vColor;
+out vec4 vPos;
+out vec4 vNorm;
 
 void main()
 {
-    vec4 vPos = uMat * aPos;
-    vec4 vNorm = uMat * aNorm;
-
-    vec3 N = normalize(vNorm.xyz);
-    vec3 L = normalize(light.position.xyz - vPos.xyz);
-    vec3 V = vec3(0.0f, 0.0f, 1.0f);
-    vec3 R = reflect(-L,N);
-
-    vec4 ambient = light.ambient * material.ambient;
-    float d = length(light.position.xyz - vPos.xyz);
-    float denom = light.att.x + light.att.y * d + light.att.z * d * d;
-    vec4 diffuse = max(dot(L,N), 0.0) * light.diffuse * material.diffuse / denom;
-    vec4 specular = pow(max(dot(R, V), 0.0), material.shineness) * light.specular * material.specular / denom;
-
-    vColor = ambient + diffuse + specular;
+    vPos = uMat * aPos;
+    vPos.z *= -1;
+    vNorm = transpose(inverse(uMat)) * aNorm;
     gl_Position = vPos;
-    gl_Position.z *= -1;
+    // gl_Position.z *= -1;
 }
