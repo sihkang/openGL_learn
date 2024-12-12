@@ -228,8 +228,9 @@ void drawFunc()
 {    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glm::mat4 matScale = glm::scale(mat, glm::vec3{0.75f, 1.0f, 0.75f});
     GLuint locMat = glGetUniformLocation(prog, "uMat");
-    glUniformMatrix4fv(locMat, 1, GL_FALSE, glm::value_ptr(mat));
+    glUniformMatrix4fv(locMat, 1, GL_FALSE, glm::value_ptr(matScale));
 
     glDrawArrays(GL_TRIANGLES, 0, numVertSphere);
     glFinish();

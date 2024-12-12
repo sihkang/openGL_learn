@@ -176,3 +176,18 @@
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-12-at-1.57.33-PM.gif)
 
+## Ellipsoid exercise (chapter 6)
+- non-uniform scaling 변환을 하게 될 때, 노말벡터를 버텍스 변환하듯, 모델 - 뷰 트랜스폼 시키는 방법을 적용하면 표면에 수직인 노말벡터로 변환되지 못함.
+- inverse, transpose한 변환 행렬을 했을 때와 아닐 때를 비교 진행.
+
+### openGL program
+- 기존 구 렌더링에서 x축으로 찌그러트리는 스케일링 진행 -> 타원 생성
+- 타원에 대해 적절한 노말 벡터 변환과 아닐 때를 비교.
+
+### vertex shader
+- vNorm 계산 시, 하나는 버텍스와 동일하게 uMat만 곱하고, 다른건 uMat을 inverse, transpose한 행렬을 곱함.
+
+## 결과
+![Alt text](<./readmeData/Screen Shot 2024-12-12 at 2.13.03 PM.png>)
+
+
