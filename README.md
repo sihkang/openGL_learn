@@ -176,6 +176,8 @@
 ## 결과
 ![Alt text](./readmeData/Screen-Recording-2024-12-12-at-1.57.33-PM.gif)
 
+---
+
 ## Ellipsoid exercise (chapter 6)
 - non-uniform scaling 변환을 하게 될 때, 노말벡터를 버텍스 변환하듯, 모델 - 뷰 트랜스폼 시키는 방법을 적용하면 표면에 수직인 노말벡터로 변환되지 못함.
 - inverse, transpose한 변환 행렬을 했을 때와 아닐 때를 비교 진행.
@@ -191,3 +193,23 @@
 ![Alt text](<./readmeData/Screen Shot 2024-12-12 at 2.13.03 PM.png>)
 왼 : uMat | 오 : transpose(inverse(uMat))
 - 오른쪽이 올바르게 렌더링되었다는 것을 볼 수 있었음.
+
+---
+
+## Phong shading exercise (chapter 6)
+### openGL program
+- 버텍스 각각이 가지는 노말벡터를 레스터라이저를 통해 이중보간하여 각 픽셀이 가지는 노말벡터를 구함.
+- 픽셀 단위로 쉐이딩 계산을 진행함.
+- 
+
+### shader
+- vertex : 버텍스 포지션, 노말벡터를 프레그먼트 쉐이더로 전달
+- fragment : 레스터라이져로부터 보간된 픽셀의 위치, 노말값으로 쉐이딩 계산 진행
+
+## 결과
+![Alt text](./readmeData/Screen-Recording-2024-12-13-at-2.33.56-PM.gif)
+
+---
+## flat shading exercise (chapter 6)
+### openGL program
+- 
